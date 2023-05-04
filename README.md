@@ -1,4 +1,4 @@
-#Lispy
+# Lispy
 
 Simple intepreter for Lisp expressions with basic arithmetic, logical and list operations in Python. 
 
