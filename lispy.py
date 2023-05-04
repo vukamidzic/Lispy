@@ -4,6 +4,7 @@ Number = (int, float) # either integer or float
 Atom = (Symbol, Number) # atom is either a variable or a number
 List = list 
 Expr = (Atom, List) # expr is defined as single expression or list of them
+Eq = (str, str)
 
 def tokenize (expr: str) -> list:
     return expr.replace('(', ' ( ').replace(')', ' ) ').split()
@@ -52,6 +53,7 @@ def std_env():
     env.update({
         'abs': abs,
         'pow': math.pow,
+        'round': round,
         '+': op.add,
         '-': op.sub,
         '*': op.mul,
@@ -61,9 +63,22 @@ def std_env():
         '>=': op.ge,
         '<=': op.le,
         '=': op.eq,
+        'eq?': op.is_,
         '~=': op.ne,
+        'max': max,
+        'max': min,
+        'list': lambda *x: List(x),
+        'fst': lambda x: x[0],
+        'rst': lambda x: x[1:],
+        'cons': lambda x, y: [x] + y,
+        'map': lambda f, ls: list(map(f, ls)),
+        'filter': lambda f, ls: list(filter(f, ls)),
+        'len': lambda x: len(x), 
         'num?': lambda x: isinstance(x, Number),
-        'sym?': lambda x: isinstance(x, Symbol)
+        'sym?': lambda x: isinstance(x, Symbol),
+        'list?': lambda x: isinstance(x, List),
+        'proc?': lambda x: isinstance(x, Procedure),
+        'null?': lambda x: x == []
     })
     return env
 
