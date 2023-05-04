@@ -4,7 +4,6 @@ Number = (int, float) # either integer or float
 Atom = (Symbol, Number) # atom is either a variable or a number
 List = list 
 Expr = (Atom, List) # expr is defined as single expression or list of them
-Eq = (str, str)
 
 def tokenize (expr: str) -> list:
     return expr.replace('(', ' ( ').replace(')', ' ) ').split()
@@ -58,11 +57,16 @@ def std_env():
         '-': op.sub,
         '*': op.mul,
         '/': op.truediv,
+        '<<': op.lshift,
+        '>>': op.rshift,
         '>': op.gt,
         '<': op.lt,
         '>=': op.ge,
         '<=': op.le,
         '=': op.eq,
+        'not': op.not_,
+        'and': op.and_,
+        'or': op.or_,
         'eq?': op.is_,
         '~=': op.ne,
         'max': max,
@@ -74,15 +78,16 @@ def std_env():
         'map': lambda f, ls: list(map(f, ls)),
         'filter': lambda f, ls: list(filter(f, ls)),
         'len': lambda x: len(x), 
+        'print': print,
         'num?': lambda x: isinstance(x, Number),
         'sym?': lambda x: isinstance(x, Symbol),
         'list?': lambda x: isinstance(x, List),
-        'proc?': lambda x: isinstance(x, Procedure),
+        'proc?': lambda x: isinstance(x, Proc),
         'null?': lambda x: x == []
     })
     return env
 
-class Procedure(object):
+class Proc(object):
     def __init__(self, params, body, env):
         self.params, self.body, self.env = params, body, env
     def __call__(self, *args): 
@@ -112,7 +117,7 @@ def eval(expr: Expr, env = global_env) -> Expr:
         env.find(symbol)[symbol] = eval(expr, env)
     elif op == 'lambda':         
         (params, body) = args
-        return Procedure(params, body, env)
+        return Proc(params, body, env)
     else:
         proc = eval(op, env)
         vals = [eval(arg, env) for arg in args]
