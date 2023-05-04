@@ -4,7 +4,7 @@ import os
 
 def eval(expr: Expr, env=global_env) -> Expr:
     # variable reference 
-    if isinstance(expr, Symbol):        
+    if isinstance(expr, Symbol):  
         return env[expr]
     # constant number
     elif isinstance(expr, Number):      
@@ -16,15 +16,15 @@ def eval(expr: Expr, env=global_env) -> Expr:
             exp = (conseq if eval(test, env) else alt)
             return eval(exp, env)
         except Exception:
-            return f'Missing or too many arguments'
+            return f"Missing or too many arguments"
     # definition
-    elif expr[0] == 'define': # --> (define (symbol) (expr)) <=> symbol = expr  
+    elif expr[0] == 'def!': # --> (define (symbol) (expr)) <=> symbol = expr  
         try:         
             (_, symbol, exp) = expr
             env[symbol] = eval(exp, env)
         except Exception:
-            return f'Missing or too many arguments'
-    elif expr[0] == 'setvar': # --> (setvar (symbol) (expr)) <=> symbol = expr (if symbol defined earlier)
+            return f"Missing or too many arguments"
+    elif expr[0] == 'set!': # --> (setvar (symbol) (expr)) <=> symbol = expr (if symbol defined earlier)
         try:
             (_, symbol, expr) = expr
             if symbol not in env:
@@ -32,22 +32,25 @@ def eval(expr: Expr, env=global_env) -> Expr:
             else:
                 env[symbol] = eval(expr, env)
         except Exception:
-            return f'Missing or too many arguments'
-    elif expr[0] == 'quote': # --> (quote (expr)) = "expr" (as string)
+            return f"Missing or too many arguments"
+    elif expr[0] == 'show': # --> (quote (expr)) = "expr" (as string)
         try:
             (_, expr) = expr
             return expr
         except Exception:
-            return f'Missing or too many arguments'
+            return f"Missing or too many arguments"
     # procedure call
-    else:                            
-        proc = eval(expr[0], env)
-        args = [eval(arg, env) for arg in expr[1:]]
-        return proc(*args)
+    else: 
+        try:                           
+            proc = eval(expr[0], env)
+            args = [eval(arg, env) for arg in expr[1:]]
+            return proc(*args)
+        except Exception as e:
+            return e
 
-def pilpstr(expr):
+def lispstr(expr):
     if isinstance(expr, List):
-        return '(' + ' '.join(map(pilpstr, expr)) + ')'
+        return '(' + ' '.join(map(lispstr, expr)) + ')'
     else:
         return str(expr)
 
@@ -62,6 +65,6 @@ def repl(prompt='lispy> '):
         else:
             val = eval(parse(cmd), global_env)
             if val is not None:
-                print(pilpstr(val))
+                print(lispstr(val))
     
 repl()
