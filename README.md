@@ -10,8 +10,8 @@ Basic forms in Lispy are:
 -  conditionals (syntax: (if (cond) (expr1) (expr2)), equivalent to if (cond) {stmts1} else {stmts2} in C. Example:  (if (< 2 1) (+ 1 1) (+ 2 2)) => 4)
 -  definitions (syntax: (def! var expr); they define a new variable and assign in a value. Example: (def! r 10) is equal to writing int r = 10; in C )
 -  assignments (syntax: (set! var expr); like definitions but can assign only to predefined variables.)
--  procedures (syntax: (proc args) or (lambda (params) (body)); in first case the proc is applied to arguments, while in second case, the body is being executed with the given parameters. Example: (def! square (n) (* n n)) )
--  lists 
+-  procedures (syntax: (proc args) or (lambda (params) (body)); in first case the proc is applied to arguments, while in second case, the body is being executed with the given parameters. Example: (def! square (lambda (n) (* n n)))
+-  lists (defined as (list [elems]); example: (list 1 2 3) --> [1,2,3], (list) --> [])
 
 ## Examples
 
