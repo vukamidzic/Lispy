@@ -70,15 +70,17 @@ def std_env():
         'eq?': op.is_,
         '~=': op.ne,
         'max': max,
-        'max': min,
+        'min': min,
         'list': lambda *x: List(x),
+        'append': op.add,
+        'add': lambda x, y: x + [y],
         'fst': lambda x: x[0],
         'rst': lambda x: x[1:],
         'cons': lambda x, y: [x] + y,
         'map': lambda f, ls: list(map(f, ls)),
         'filter': lambda f, ls: list(filter(f, ls)),
         'len': lambda x: len(x), 
-        'print': print,
+        'write': print,
         'num?': lambda x: isinstance(x, Number),
         'sym?': lambda x: isinstance(x, Symbol),
         'list?': lambda x: isinstance(x, List),
@@ -94,6 +96,62 @@ class Proc(object):
         return eval(self.body, Env(self.params, args, self.env))
 
 global_env = std_env()
+
+help = '''Help:
+    (op expr1 expr2) <==> expr1 op expr2
+    where op: + - * / < > <= >= ~= = << >> and not or max min
+
+    (eq? expr1 expr2) --> true if both expr1 and expr2 are identical objects
+    example: (eq? 1 1) --> true, (eq? (list 1 2) (list 1 2)) --> false
+
+    (list [elems...]) --> creates a list out of given elements
+    example: (list 1 2 3) <--> (1,2,3)
+
+    (append list1 list2) --> appends second list to first
+    example: (append (list 1 2 3) (list 4 5 6)) --> (1 2 3 4 5 6)
+
+    (add list [expr|list]) --> adds expression/list as element to a list
+    example: (add (list 1 2 3) 4) --> (1 2 3 4), (add (list 1 2 3) (list 1 2 3)) --> (1 2 3 (1 2 3))
+
+    (fst list) --> returns head of list
+    example: (fst (list 1 2 3)) --> 1
+
+    (rst list) --> returns everything behind the head of list
+    example: (fst (list 1 2 3)) --> (2 3)
+
+    (cons [expr|list] list) --> adds expression/list as element to beginning of list
+    example: (cons 4 (list 1 2 3)) --> (4 1 2 3), (cons (list 1 2 3) (list 1 2 3)) --> ((1 2 3) 1 2 3)
+
+    (abs expr) --> returns absolute value of expression
+    example: (abs -4) --> 4
+
+    (pow expr power) --> returns power of expression
+    example: (pow 2 3) --> 8.0
+        
+    (round expr) --> returns rounded value of expression
+    example: (round 14.5678) --> 15, (round 14.1234) --> 14 
+
+    (map func list) --> maps a list using a function
+    example: (def! f (lambda (n) (+ n 1)))
+            (map f (list 1 2 3)) --> (2 3 4)
+
+    (filter func list) --> filters a list using a function
+    example: (def! f (lambda (n) (> n 2)))
+            (filter f (list 1 2 3 4)) --> (3 4)
+
+    (len list) --> returns length of list
+    example: (len (list 1 2 3)) --> 3
+
+    (write expr) --> prints value of expression as string
+    example: (write (+ 3 4)) --> 7
+
+    (num? expr) --> checks if expression is instance of number
+    (sym? expr) --> checks if expression is instance of symbol
+    (list? expr) --> checks if expression is instance of list
+    (proc? expr) --> checks if expression is instance of lambda procedure
+    (null? expr) --> checks if expression is null
+    example: (null? 3) --> false, (null? a (a exists)) --> false, (null? (list)) --> true
+'''
 
 def eval(expr: Expr, env = global_env) -> Expr:
     if isinstance(expr, Symbol):
@@ -136,9 +194,12 @@ def repl(prompt='lispy> '):
             break
         elif expr == 'clean':
             os.system('cls')
+        elif expr == 'help':
+            print(help)
         else:
             val = eval(parse(expr))
             if val is not None: 
                 print(lispstr(val))
     
+
 repl()
