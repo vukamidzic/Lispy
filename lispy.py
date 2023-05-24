@@ -72,11 +72,11 @@ def std_env():
         'max': max,
         'min': min,
         'list': lambda *x: List(x),
-        'append': op.add,
-        'add': lambda x, y: x + [y],
+        'add': op.add,
+        'append': lambda x, y: x + [y],
         'fst': lambda x: x[0],
         'rst': lambda x: x[1:],
-        'cons': lambda x, y: [x] + y,
+        'insert': lambda x, y: [x] + y,
         'map': lambda f, ls: list(map(f, ls)),
         'filter': lambda f, ls: list(filter(f, ls)),
         'len': lambda x: len(x), 
@@ -192,7 +192,7 @@ def repl(prompt='lispy> '):
         expr = input(prompt)
         if expr == 'quit':
             break
-        elif expr == 'clean':
+        elif expr == 'clear':
             os.system('cls')
         elif expr == 'help':
             print(help)
